@@ -1,0 +1,22 @@
+google-cloud-aiplatform
+faiss-cpu
+pandas
+numpy
+python-dotenv
+langchain-google-genai #langchain integrations for google ai studio api
+langchain # core langchain library
+langchain-community
+langgraph # building agent
+unstructured # for document loading eg.- pdf,txt
+beautifulsoup4
+pytest
+flake8
+streamlit
+httpx
+uvicorn
+fastapi
+sentence-transformers
+langchain-huggingface
+ollama
+langchain-ollama
+
