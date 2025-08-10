@@ -18,7 +18,8 @@ class AgentState(BaseModel):
                                     # produced by `product_filter`
     compared_insights:List[str] = Field(default_factory=list) # textual comparison insights between products.
                            # output of `comparison_reasoner` 
-    recommendations: List[str] = Field(default_factory=list) # Final product recommendations
+    recommendations: List[Any] = Field(default_factory=list) # Final product recommendations
                           # produced by recommendation_generator
+
 
     model_config = ConfigDict(arbitrary_types_allowed=True)                     

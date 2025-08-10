@@ -1,13 +1,16 @@
-from fastapi import FastAPI,Request
-from pydantic import BaseModel
-from agents.graph import build_agent_graph
+from fastapi import FastAPI
+from app.routes import router as recommendation_router
 
-app = FastAPI()
+app = FastAPI(
+    title = "Product Recommendation with LangGraph Agents",
+    description = "Recommends products based on user preference.",
+    version= "1.0"
+)
 
-class userRequest(BaseModel):
-    user_input: str
+# Register routes
+app.include_router(recommendation_router)
 
-@app.post("/recommend")
-async def recommend(user_req:userRequest):
-    result = build_agent_graph(user_req.user_input)
-    return {"recommendations":result}
+@app.get("/health")
+async def health_check():
+    return {"status":"ok"}
+

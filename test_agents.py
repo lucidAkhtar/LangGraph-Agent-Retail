@@ -4,12 +4,12 @@ import time
 from pprint import pprint
 
 
-from agents.base_agent import AgentState
-from agents.preference_extractor import extract_preferences
-from agents.product_retriever import load_and_embed_products,retrieve_products
-from agents.product_filter import filter_products
-from agents.comparison_reasoner import compare_products
-from agents.recommendation_generator import generate_recommendations
+from agents.nodes.base_agent import AgentState
+from agents.nodes.preference_extractor import extract_preferences
+from agents.nodes.product_retriever import load_and_embed_products,retrieve_products
+from agents.nodes.product_filter import filter_products
+from agents.nodes.comparison_reasoner import compare_products
+from agents.nodes.recommendation_generator import generate_recommendations
 
 
 pprint("Loading vectorstore from FAISS index...")

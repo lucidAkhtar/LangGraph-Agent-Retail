@@ -1,12 +1,15 @@
 from langchain_core.prompts import  PromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
+#from langchain_google_genai import ChatGoogleGenerativeAI
 import pandas as pd
 # Parse markdown table to Dataframe
 from io import StringIO 
 import re
-import csv
+import logging
+logging.basicConfig(level=logging.INFO)
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",temperature=0.2)
+#llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",temperature=0.2)
+from langchain_ollama import OllamaLLM
+llm = OllamaLLM(model="mistral",temperature=0.2)
 
 prompt = PromptTemplate.from_template(
     "You are a smart shopping assistant. The user is looking for a product with the following preferences: {preferences}." \
@@ -21,6 +24,8 @@ prompt = PromptTemplate.from_template(
 )
 
 def parse_markdown_table(markdown_text:str) -> pd.DataFrame:
+
+    
 
     lines = markdown_text.strip().splitlines()
     table_lines = [line for line in lines if "|" in line]
@@ -44,6 +49,8 @@ def parse_markdown_table(markdown_text:str) -> pd.DataFrame:
 
 def compare_products(state):
 
+    logging.info(f"comparison_reasoner script starts here...")
+
     # 1. Format Input prompt
     input_text = prompt.format(
 
@@ -53,17 +60,21 @@ def compare_products(state):
     # 2. Invoke LLM
     response = llm.invoke(input_text)
     # Extract actual string from AIMessage
-    response_text = response.content.strip()
+    #response_text = response.content.strip()
+    response_text = response.strip()
     print(f"Response text generated: {response_text}")
    
     try:
         # 3. Detect CSV header
+        logging.info(f"CSV header detection starts...")
+
         if "," in response_text and re.search(r"(?i)(product name|price|brand).*?,",response_text):
             print(f"Detected CSV format...")
-            df = pd.read_csv(StringIO(response_text))
+            df = pd.read_csv(StringIO(response_text),on_bad_lines="skip")
             print(f"parsed csv dataframe...")
             print(df.head())
             state.compared_insights = df
+            logging.info(f"comparison_reasoner script ends here...")
             return state
         
         # 4. Fallback- try markdown table
@@ -73,10 +84,12 @@ def compare_products(state):
             print(f"parsed markdown table DataFrame:")
             print(df.head())
             state.compared_insights = df
+            logging.info(f"comparison_reasoner script ends here...")
             return state
         
         else:
             state.compared_insights = f"No table format detected..."
+            logging.info(f"comparison_reasoner script ends here...")
             return state
         
     except Exception as e:
