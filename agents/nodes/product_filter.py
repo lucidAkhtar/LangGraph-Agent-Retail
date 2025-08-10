@@ -50,6 +50,8 @@ def filter_products(state):
         
         print(f"df in discount-price code is:{df.head()}")
 
+    logging.info(f"CSV saved:{df.to_csv('df1.csv',index=False)}")
+    
     # key name should match
     if prefs.get("must have features"):
         pattern = "|".join(re.escape(feat) for feat in prefs["must have features"])

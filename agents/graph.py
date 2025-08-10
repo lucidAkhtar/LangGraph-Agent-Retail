@@ -9,6 +9,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import pandas as pd
 
+# global cache dictionary
+query_cache = {}
 
 def build_agent_graph(vectorstore,df):
 
@@ -39,6 +41,11 @@ def build_agent_graph(vectorstore,df):
 
 def run_agent(user_input:str):
 
+    key = user_input.strip().lower()
+    if key in query_cache:
+        logging.info(f"Cache Hit,returning cached result...")
+        return query_cache[key]
+
     vectorstore,df = load_and_embed_products("data/filtered_category_wise/all_data_v1.csv")
     logging.info("embeddings extracted and dataframe created...")
 
@@ -55,6 +62,8 @@ def run_agent(user_input:str):
     )
 
     final_state = agent.invoke(initial_state)
+    query_cache[key] = final_state['recommendations']
+
     return final_state['recommendations']
 
 

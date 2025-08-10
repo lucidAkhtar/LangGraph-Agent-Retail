@@ -12,14 +12,32 @@ from langchain_ollama import OllamaLLM
 llm = OllamaLLM(model="mistral",temperature=0.2)
 
 prompt = PromptTemplate.from_template(
-    "You are a smart shopping assistant. The user is looking for a product with the following preferences: {preferences}." \
-    "Here are some product options: {products}. " \
-    
-    "Compare the mentioned products based on user preferences." \
-    "Return your output in **CSV format** with the following columns:"\
-    "Product Name, Price, Brand, Features, Match Score." \
-    "**Enclose every field in double quotes** to handle commas safely."\
-    "No markdown formatting,no code block.Only the raw CSV text."
+
+    """
+    You are a precise and detail-oriented shopping assistant.
+
+    INPUT DATA:
+    - user preferences: {preferences}
+    - products name: {products}
+
+    Your task is to compare ONLY the provided products against the user preferences.
+    - Do NOT invent,assume or add products,brands,must have features,or prices that are not explicitly present in the product list data.
+
+    OUTPUT REQUIREMENTS:
+    - output must be in raw **CSV format** (no markdown,no code blocks, no extra text)
+    - Columns must be exactly 
+    1. Product Name
+    2. Price
+    3. Brand
+    4. Features
+    5. Match Score
+
+    - Enclose every field in double quotes.
+    - Use a numeric score between 0 and 100 for Match Score. Do not include %/ or percentages in that.
+    - Preserve original wording for Product Name,Brand,and Features as given.
+    - Return only the CSV data with one product per row.
+
+    """
    
 )
 

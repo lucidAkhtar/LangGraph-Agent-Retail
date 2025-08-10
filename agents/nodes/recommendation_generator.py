@@ -12,8 +12,34 @@ from langchain_ollama import OllamaLLM
 llm = OllamaLLM(model="mistral",temperature=0.2)
 
 prompt = PromptTemplate.from_template(
-    "Given the user preferences {preferences} and insights {insights}, Return the product comparison table in Markdown format with columns: Product Name, Brand, Match Score, and Recommendation Justification."\
-    "Do not provide any other information apart from recommendations and its justication. For example- Important considerations or Note. The justification should be in a way that it can be framed as a column in a dataframe."
+    """
+    You are a recommendation engine that must compare products strictly using the provided information.
+    INPUT DATA:
+    - user preferences: {preferences}
+    - Product Insights: {insights}
+
+    TASK:
+    - Generate a **markdown table** with the following columns, in this exact order:
+    1. Product Name
+    2. Brand
+    3. Match Score (integer between 1 and 100, no %/ symbol)
+    4. Justification (one short sentence explaining why the products matches the preferences)
+
+    REQUIREMENTS:
+    - only use product names and brands explicitly present in the provided insights.If a field is missin, write N/A
+    - Do NOT invent or assume product names,brands or other details.
+    - Match Score should be based on alignment between users preferences and product insights.If uncertain, score conservatively.
+    - Justification must be short, factual,and suitable for a dataframe cell (avoid line breaks, avoid extra commentary).
+    - The table must be a **valid Markdown** and contain no text before or after it.
+    - Do not output explanations,notes, or considerations outside the table.
+    
+    OUTPUT FORMAT:
+
+    |Product Name |Brand | Match Score | Justification |
+    |-------------|----- |-------------|---------------|
+    | ...         | ...  | ...         | ...           |
+
+    """
 )
 
 def parse_markdown_table(markdown_text):
@@ -60,9 +86,6 @@ def generate_recommendations(state):
 
     if not df.empty:
         logging.info(f"Dataframe generated via parsing function...")
-        
-        # Dataframe for Streamlit/Internal use only
-        #state.recommendations_df = df
 
         # Store API-safe json
         json_data = df.to_dict(orient='records')
@@ -73,7 +96,6 @@ def generate_recommendations(state):
 
         clean_data = []
         for rec in json_data:
-            logging.info(f"printing the json data type")
 
             if isinstance(rec,dict):
                 clean_data.append(rec)
@@ -98,6 +120,5 @@ def generate_recommendations(state):
         logging.info(f"generate_recommendations script ends here...")
         return state
     else:
-        #state.recommendations_df = None
         state.recommendations = f"Failed to extract recommendations from LLM response..."
         return state

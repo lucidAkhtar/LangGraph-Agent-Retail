@@ -10,12 +10,14 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 #embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+
+#1. Load embeddings globally once
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # Load CSV and convert to documents
 def load_and_embed_products(csv_path,batch_size=10):
-
     logging.info(f"load_and_embed_products script starts here...")
+   
 
     df = pd.read_csv(csv_path)
     docs = [Document(page_content = row.to_json(),metadata={"index":i}) 
@@ -70,14 +72,16 @@ def retrieve_products(state,vectorstore,df,k=5):
     logging.info(f"Original df columns is:{df.columns}")
 
     #1. First,get semantic matches from FAISS vector datastore
-    results = vectorstore.similarity_search(state.user_input,k = k*3)
+    results = vectorstore.similarity_search(state.user_input,k = k*4)
     indices = [doc.metadata["index"] for doc in results]
 
     if not indices:
         logging.info(f"No matching indices were found and/or available.")
 
     retrieved_df = df.iloc[indices].reset_index(drop=True)
-
+    logging.info(f"Retrieved df by similarity search is: {retrieved_df.shape}")
+    logging.info(f"Retrieved df by similarity search is: {retrieved_df.head()}")
+    logging.info(f"Retrieved df is saved to : {retrieved_df.to_csv("df.csv",index=False)}")
     #2. Try to detect category from user_query (scalable keyword mapping)
     
     categories = [re.sub(r'[\s_]+',' ',cat.strip().lower()) for cat in df['category'].dropna().unique()]
@@ -102,7 +106,8 @@ def retrieve_products(state,vectorstore,df,k=5):
 
     #4. If category filter leaves nothing,just keep semantic matches
     retrieved_df = retrieved_df.head(k).reset_index(drop=True)
-      
+    
+    logging.info(retrieved_df.head())
     #5. Store in state
     state.retrieved_products = retrieved_df
     state.filtered_products = retrieved_df
@@ -111,5 +116,7 @@ def retrieve_products(state,vectorstore,df,k=5):
 
     return state
 
+
+# ollama serve
 
 
