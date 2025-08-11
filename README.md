@@ -24,5 +24,32 @@ This project is designed for **retail AI prototyping** and can be deployed as an
 
 ---
 
-## 📂 Project Structure
+
+---
+
+## ⚙️ Installation
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/lucidAkhtar/LangGraph-Agent-Retail.git
+cd LangGraph-Agent-Retail
+
+
+python -m venv venv
+source venv/bin/activate    # macOS/Linux
+venv\Scripts\activate       # Windows
+
+
+ How It Works
+User Query → Given in natural language.
+
+Preference Extractor → Identifies category, budget, brand, etc.
+
+Product Retriever → Searches FAISS vector index for relevant items.
+
+Product Filter → Removes irrelevant products based on constraints.
+
+Comparison Reasoner → Compares shortlisted products.
+
+Recommendation Generator → Returns personalized product suggestions.
 
