@@ -9,7 +9,7 @@ def combine_csv_with_category(input_folder,output_file):
     for filename in os.listdir(input_folder):
         if filename.endswith(".csv"):
             filepath = os.path.join(input_folder,filename)
-            df = pd.read_csv(filepath)
+            df = pd.read_csv(filepath,nrows=50)
             category = os.path.splitext(filename)[0]
             df['category'] = category
             all_dfs.append(df)
@@ -21,3 +21,16 @@ def combine_csv_with_category(input_folder,output_file):
     print(f"Combined CSV saved to: {output_file}")
 
 combine_csv_with_category(input_folder,output_file)
+
+from transformers import AutoTokenizer
+
+def count_tokens():
+
+    df = pd.read_csv("data/filtered_category_wise/all_data_v1.csv")
+    text_data = ' '.join(df.astype(str).values.flatten())
+    tokenizer = AutoTokenizer.from_pretrained('gpt2')
+    tokens = tokenizer.encode(text_data)
+    print(f"the number of tokens in the file is:{len(tokens)}")
+    # the number of tokens in the file is:104022 (104K) - 700 records
+    # the number of tokens in the file is:52014 (52K) - 350 records
+count_tokens()

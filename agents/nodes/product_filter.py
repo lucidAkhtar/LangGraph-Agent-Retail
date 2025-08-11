@@ -16,11 +16,13 @@ def filter_products(state):
     logging.info(f"Shape of df is :-{df.shape}")
 
     if prefs.get("brand"):
-        df = df[df["brand"].str.contains(prefs["brand"],case=False)]
+
+        logging.info(f"prefs.get(brand) is TRUE...")
+        df = df[df["name"].str.contains(prefs["brand"],case=False)]
 
     if prefs.get("budget"):
         # extract digits from amount mentioned in the user_input
-        
+        logging.info(f"prefs.get(budget) is TRUE...")
         budget_input = prefs["budget"]
 
         if isinstance(budget_input,int):
@@ -42,18 +44,20 @@ def filter_products(state):
         if 'discount_price' not in df.columns:
             raise ValueError("Required columns missing in dataframe...")
         
-        df["discount_price"] = df["discount_price"].str.replace("₹","",regex=False).str.replace(",","").str.strip()
-        print(df["discount_price"])
-        df["discount_price"] = pd.to_numeric(df["discount_price"],errors="coerce")
+        #df["discount_price"] = df["discount_price"].str.replace("₹","",regex=False).str.replace(",","").str.strip()
+        #print(df["discount_price"])
+        #df["discount_price"] = pd.to_numeric(df["discount_price"],errors="coerce")
 
         df = df[df["discount_price"] <= budget]
         
         print(f"df in discount-price code is:{df.head()}")
 
-    logging.info(f"CSV saved:{df.to_csv('df1.csv',index=False)}")
+    #logging.info(f"CSV saved:{df.to_csv('df1.csv',index=False)}")
     
     # key name should match
     if prefs.get("must have features"):
+        logging.info(f"prefs.get(must have features) is TRUE...")
+
         pattern = "|".join(re.escape(feat) for feat in prefs["must have features"])
         df = df[df["name"].str.contains(pattern,case=False)]
 

@@ -9,10 +9,6 @@ from langchain_ollama import OllamaLLM
 llm = OllamaLLM(model="mistral",temperature=0.2)
 parser = JsonOutputParser()
 
-"""
-You have a dataframe provided - {df}. In this , a column named category is available. Try to match the must have features as mentioned in the keys as close or equal to the category in the dataframe.
-"""
-
 prompt = PromptTemplate.from_template(
 
     """Extract user preferences as JSON from the following text:

@@ -20,8 +20,10 @@ prompt = PromptTemplate.from_template(
     - user preferences: {preferences}
     - products name: {products}
 
-    Your task is to compare ONLY the provided products against the user preferences.
-    - Do NOT invent,assume or add products,brands,must have features,or prices that are not explicitly present in the product list data.
+    Your task is to compare ONLY the provided {products} against the user {preferences}.
+    - - If there are no products in the {products},state clearly, that no products were found that matched the search criteria.
+    - If the count of {products} is zero , do not add any product details from your end. Do not add any extra data point.
+    - **Do NOT invent,assume or add** products,brands,must have features,or prices that are not explicitly present in the {products} list data.
 
     OUTPUT REQUIREMENTS:
     - output must be in raw **CSV format** (no markdown,no code blocks, no extra text)
@@ -42,8 +44,6 @@ prompt = PromptTemplate.from_template(
 )
 
 def parse_markdown_table(markdown_text:str) -> pd.DataFrame:
-
-    
 
     lines = markdown_text.strip().splitlines()
     table_lines = [line for line in lines if "|" in line]

@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 import time
+import pandas as pd
 from pprint import pprint
 
 
@@ -13,23 +14,25 @@ from agents.nodes.recommendation_generator import generate_recommendations
 
 
 pprint("Loading vectorstore from FAISS index...")
-start = time.time()
-vectorstore,df = load_and_embed_products("data/filtered_category_wise/all_data_v1.csv")
-end = time.time()
-pprint(f"time taken is {end-start:.2f}s")
+vectorstore = load_and_embed_products()
 pprint("Loading vectorstore from FAISS is done...")
 
 pprint(f"AgentState initialising with user_input...")
 state = AgentState(
-    user_input="I want a casual shoes for office use under 1000 rupees."
+    #user_input="I want a casual shoes under 2500." # 3 records as output
+    user_input = "designer kurti for wedding under 3000" # 1 record dummy as output 
+    #user_input = "mens sandals and boots under 2000" # 0 records as output
+    #user_input = "sandals and boots under 2000" # 1 record as output
     )
 pprint(f"AgentState initialised with user_input...")
 
 state = extract_preferences(state)
 pprint(f"\n [extract_preferences] => {state.preferences}")
 
+df = pd.read_csv("data/filtered_category_wise/data_for_embedding.csv")
 state = retrieve_products(state,vectorstore,df)
 pprint(f"\n [retrieve_products] => {len(state.retrieved_products)} products found")
+
 
 state.filtered_products = state.retrieved_products.copy()
 
@@ -43,7 +46,9 @@ pprint(f"\n [compare_products]=> {state.compared_insights}")
 
 state = generate_recommendations(state)
 pprint(f"\n [generate_recommendations]=> {state.recommendations}")
-state.recommendations.to_csv("recommendations.csv",index=False)
+#state.recommendations.to_csv("recommendations.csv",index=False)
+
+
 
 pprint("DONE...")
       

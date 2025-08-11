@@ -19,4 +19,5 @@ sentence-transformers
 langchain-huggingface
 ollama
 langchain-ollama
-
+transformers
+cohere
