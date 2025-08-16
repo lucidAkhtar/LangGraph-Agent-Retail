@@ -16,7 +16,7 @@ class AgentState(BaseModel):
     retrieved_products: List[Any] = Field(default_factory=list)
     filtered_products: pd.DataFrame = Field(default_factory=pd.DataFrame) # products shortlisted based on preferences.
                                     # produced by `product_filter`
-    compared_insights:List[str] = Field(default_factory=list) # textual comparison insights between products.
+    compared_insights:List[Any] = Field(default_factory=list) # textual comparison insights between products.
                            # output of `comparison_reasoner` 
     recommendations: List[Any] = Field(default_factory=list) # Final product recommendations
                           # produced by recommendation_generator

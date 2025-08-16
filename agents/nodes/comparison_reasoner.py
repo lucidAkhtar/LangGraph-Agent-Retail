@@ -11,9 +11,8 @@ logging.basicConfig(level=logging.INFO)
 from langchain_ollama import OllamaLLM
 llm = OllamaLLM(model="mistral",temperature=0.2)
 
-prompt = PromptTemplate.from_template(
 
-    """
+"""
     You are a precise and detail-oriented shopping assistant.
 
     INPUT DATA:
@@ -21,24 +20,53 @@ prompt = PromptTemplate.from_template(
     - products name: {products}
 
     Your task is to compare ONLY the provided {products} against the user {preferences}.
-    - - If there are no products in the {products},state clearly, that no products were found that matched the search criteria.
+    - Focus on the keywords present in the {preferences} and if those keywords are present in the {products}, do consider those records or products as well.Include them in your response. Also, you have to understand the semantics and contextual meaning between the words of {products} and {preferences}.
+    - If there are no products in the {products},state clearly, that no products were found that matched the search criteria.
+    - Do not provide any suggestions,code, examples, any kind of recommendation or justification apart from what is mentioned in OUTPUT REQUIREMENTS.
     - If the count of {products} is zero , do not add any product details from your end. Do not add any extra data point.
     - **Do NOT invent,assume or add** products,brands,must have features,or prices that are not explicitly present in the {products} list data.
 
     OUTPUT REQUIREMENTS:
     - output must be in raw **CSV format** (no markdown,no code blocks, no extra text)
     - Columns must be exactly 
-    1. Product Name
-    2. Price
-    3. Brand
-    4. Features
-    5. Match Score
+    1. ProductName - Do not have any inverted commas at start or end.Keep it clean. type is string
+    2. Price - type is float
+    3. Features - type is string
+    4. MatchScore - type is integer
 
     - Enclose every field in double quotes.
-    - Use a numeric score between 0 and 100 for Match Score. Do not include %/ or percentages in that.
-    - Preserve original wording for Product Name,Brand,and Features as given.
+    - Use a numeric score between 0 and 100 for "MatchScore" column. Do not include %/ or percentages in that.
+    - Preserve original wording for ProductName,Brand,and Features as given.
     - Return only the CSV data with one product per row.
+    - Ensure that all the above (4) columns are returned with the correct data type.
 
+"""
+
+prompt = PromptTemplate.from_template(
+    """
+    You are a precise and detail-oriented shopping assistant.
+
+    INPUT:
+    - user preferences: {preferences}
+    - products data: {products}
+
+    TASK:
+    - Compare each product in the `products data` table against the `user preference`.
+    - Generate a CSV string of products that match the preferences.
+
+    RULES:
+    - **CRITICAL** - only use the provided `products data`.Do not invent,assume, or add any information.
+    - Output must be valid CSV only.If no products match,return only the CSV header.
+    - Do not use Python code, .join(), f-strings,markdown,or explanations.
+    - Each row must be plain text csv (e.g.,`Fila Mens Shoes,1999.0,"casual,leather",90`) 
+    - The output must be a valid ,raw CSV. No surrounding text,no code blocks, no explanations.
+    - The CSV must have exactly these columns : ProductName,Price,Features,MatchScore.
+
+    COLUMN REQUIREMENTS:
+    - ProductName: Must be a string directed from the input.
+    - Price: Must be a float from the input.
+    - Features: Must be a single CSV-safe string enclosed in double quotes containing a comma-separated list of keywords (e.g.,"kids,cotton,red").
+    - MatchScore: an integer from 0-100
     """
    
 )
@@ -65,9 +93,48 @@ def parse_markdown_table(markdown_text:str) -> pd.DataFrame:
     df = pd.read_csv(StringIO(pseduo_csv))
     return df
 
+def clean_llm_csv(text: str) -> str:
+    # Remove markdown fences if present
+    text = re.sub(r"^```(csv)?", "", text.strip(), flags=re.MULTILINE)
+    text = re.sub(r"```$", "", text.strip(), flags=re.MULTILINE)
+
+    # Unescape \n to real newlines
+    text = text.replace("\\n", "\n")
+
+    # Strip wrapping quotes if the whole thing is enclosed in ""
+    if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
+        text = text[1:-1]
+
+    # Strip extra surrounding whitespace
+    text = text.strip()
+
+    return text
+
 def compare_products(state):
 
     logging.info(f"comparison_reasoner script starts here...")
+    logging.info(f"state.filtered_products is - {state.filtered_products}")
+    logging.info(f"state.filtered_products in json is - {state.filtered_products.to_dict(orient='records')}")
+
+
+    # products =  state.filtered_products.to_dict(orient='records')
+    # preferences = state.preferences
+
+    # rows = []
+    # for product in products:
+    #     features = product.get("must have features",[])
+    #     if not isinstance(features,list):
+    #         features = str(features).split(",")
+
+    #     score = int(100*len(features) / max(1, len(preferences.get("must have features",[]))))
+
+    #     row = f"\"{product['name']}\",{product['discount_price']},\"{','.join(features)}\",{score}"
+    #     rows.append(row)
+
+
+    # response_text = "ProductName,Price,Features,MatchScore\n" + "\n".join(rows)
+    # logging.info(f"response text is - {response_text}")
+
 
     # 1. Format Input prompt
     input_text = prompt.format(
@@ -75,7 +142,7 @@ def compare_products(state):
         products = state.filtered_products.to_dict(orient="records"),
         preferences = state.preferences
     )
-    # 2. Invoke LLM
+    # 2. Inved_response_textoke LLM
     response = llm.invoke(input_text)
     # Extract actual string from AIMessage
     #response_text = response.content.strip()
@@ -86,12 +153,45 @@ def compare_products(state):
         # 3. Detect CSV header
         logging.info(f"CSV header detection starts...")
 
-        if "," in response_text and re.search(r"(?i)(product name|price|brand).*?,",response_text):
+        if "," in response_text and re.search(r"(?i)(product name|price).*?,",response_text):
             print(f"Detected CSV format...")
-            df = pd.read_csv(StringIO(response_text),on_bad_lines="skip")
+            # regex to find the list-like string and replace it with a single ,quoted string
+            # this makes the row a valid csv format 
+            #example: replaces["kids","cotton"] with "[kids,cotton]"
+
+            
+            cleaned_response = response_text.strip().lstrip('"').rstrip('"')
+            cleaned_response = cleaned_response.strip().strip('"')
+            #cleaned_response = clean_llm_csv(response_text)
+            
+
+            if (cleaned_response.startswith('"') and cleaned_response.endswith('"')) or (cleaned_response.startswith("'")and cleaned_response.endswith("'")):
+                cleaned_response = cleaned_response[1:-1]
+
+            cleaned_response = response_text.replace("\\n","\n").strip()
+            cleaned_response = re.sub(r'^\s*""\s*$','',cleaned_response,flags=re.MULTILINE)
+            cleaned_response = re.sub(r'^\s*([^",][^,]+),',r'"\1"',cleaned_response,flags=re.MULTILINE)
+            cleaned_response = re.sub(r'\n\s+','\n',cleaned_response)
+            cleaned_response = re.sub(r'""([^"]+)"',r'"\1"',cleaned_response)
+            cleaned_response = re.sub(r'\[(.*?)\]',lambda m: '"' + m.group(1).replace('"','')+ '"',cleaned_response)
+
+
+
+           
+
+
+            df = pd.read_csv(StringIO(cleaned_response),on_bad_lines="skip")
             print(f"parsed csv dataframe...")
-            print(df.head())
-            state.compared_insights = df
+
+            if 'Features' in df.columns:
+                df['Features'] = df['Features'].apply(lambda x:[i.strip() for i in str(x).split(',')] if pd.notnull(x) else [])
+
+            print(df)
+            #df = df.sort_values(by='Match Score',ascending=False)
+            df.to_csv('3.csv',index=False)
+            
+            state.compared_insights = df.to_dict(orient='records')
+            
             logging.info(f"comparison_reasoner script ends here...")
             return state
         
@@ -100,7 +200,10 @@ def compare_products(state):
             print(f"Detected markdown table...")
             df = parse_markdown_table(response_text)
             print(f"parsed markdown table DataFrame:")
-            print(df.head())
+            print(df)
+            #df = df.sort_values(by='Match Score',ascending=False)
+            df.to_csv('3.csv',index=False)
+            
             state.compared_insights = df
             logging.info(f"comparison_reasoner script ends here...")
             return state

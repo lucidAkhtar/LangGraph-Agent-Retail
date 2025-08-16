@@ -14,16 +14,17 @@ app = FastAPI(
 )
 
 # Dependency Injection
-def get_vectorstore_and_df() -> Tuple:
+def get_vectorstore() -> Tuple:
 
-    if not hasattr(get_vectorstore_and_df,"cache"):
-        logging.info(f"loading vectorstore and dataframe for the first time...")
-        get_vectorstore_and_df.cache = load_and_embed_products("data/filtered_category_wise/all_data_v1.csv")
+    if not hasattr(get_vectorstore,"cache"):
 
-    return get_vectorstore_and_df.cache
+        logging.info(f"loading vectorstore at the beginning...")
+        get_vectorstore.cache = load_and_embed_products()
+
+    return get_vectorstore.cache
 
 # Pass the dependency to your routes
-app.dependency_overrides[Tuple] = get_vectorstore_and_df
+app.dependency_overrides[Tuple] = get_vectorstore
 
 # Register routes
 app.include_router(recommendation_router)

@@ -3,8 +3,7 @@ LangGraph-Agent-Retail is an AI-powered retail product recommendation and search
 It leverages multi-agent reasoning, vector search, and natural language understanding to deliver personalized product suggestions, comparison reasoning, and preference-based filtering for retail catalogs.
 
 This project is designed for retail AI prototyping and can be deployed as an API or an interactive Streamlit application.
-
-🚀 Features
+Features
 Conversational Product Search – Understands natural language queries like "Find me budget-friendly running shoes under ₹3000".
 
 Multi-Agent Graph Workflow – Modular agents for:

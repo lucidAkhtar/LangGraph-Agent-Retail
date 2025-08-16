@@ -5,9 +5,9 @@ class userRequest(BaseModel):
     user_input:str
 
 class RecommendationItem(BaseModel):
-    product_name: Optional[str] = Field(None,alias="Product Name")
+    product_name: Optional[str] = Field(None,alias="ProductName")
     brand_name: Optional[str] = Field(None,alias="Brand")
-    match_score: Optional[float] = Field(None,alias="Match Score")
+    match_score: Optional[int] = Field(None,alias="MatchScore")
     justification: Optional[str] = Field(None,alias="Justification")
 
     

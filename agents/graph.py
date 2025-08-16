@@ -12,12 +12,14 @@ import pandas as pd
 # global cache dictionary
 query_cache = {}
 
-def build_agent_graph(vectorstore,df):
+def build_agent_graph(vectorstore):
 
     logging.info(f"build_agent_graph script starts here...")
 
     builder = StateGraph(AgentState)
-   
+    
+    df = pd.read_csv("data/filtered_category_wise/data_for_embedding.csv")
+    
     # using partials to inject dependencies
     from functools import partial
     retrieve_with_data = partial(retrieve_products,vectorstore=vectorstore,df=df)
@@ -46,10 +48,10 @@ def run_agent(user_input:str):
         logging.info(f"Cache Hit,returning cached result...")
         return query_cache[key]
 
-    vectorstore,df = load_and_embed_products("data/filtered_category_wise/all_data_v1.csv")
-    logging.info("embeddings extracted and dataframe created...")
+    vectorstore = load_and_embed_products()
+    logging.info("embeddings extracted ...")
 
-    agent = build_agent_graph(vectorstore,df)
+    agent = build_agent_graph(vectorstore)
 
     initial_state = AgentState(
             user_input = user_input,

@@ -25,7 +25,8 @@ embeddings = CohereEmbeddings(
 
 #embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-def generate_documents(csv_path):
+def generate_documents(csv_path="data/filtered_category_wise/data_for_embedding.csv"):
+    
     df = pd.read_csv(csv_path)
     df['text_for_embedding'] = df['main_category']+":"+df['name']
 
@@ -141,7 +142,7 @@ def load_and_embed_products(embeddings_path="embeddings/data_embeddings.npy",tex
     return vectorstore
     
 
-def retrieve_products(state,vectorstore,df,k=5):
+def retrieve_products(state,vectorstore,df,k=10):
 
     logging.info(f"retrieve_products script starts here...")
 
@@ -193,9 +194,11 @@ def retrieve_products(state,vectorstore,df,k=5):
 
     #4. If category filter leaves nothing,just keep semantic matches
     retrieved_df = retrieved_df.head(k).reset_index(drop=True)
-    
+    retrieved_df.to_csv('1.csv',index=False)
+
     logging.info(retrieved_df.head())
     #5. Store in state
+
     state.retrieved_products = retrieved_df
     state.filtered_products = retrieved_df
 

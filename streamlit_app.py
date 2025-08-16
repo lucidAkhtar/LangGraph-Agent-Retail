@@ -50,7 +50,7 @@ def main():
                     #Save query and result to history
                     st.session_state.qa_history.append((user_input,df))
                     # Refresh UI to show history and new input
-                    st.experimental_rerun()
+                    st.rerun()
                     
     
     # Display all Q&A pairs

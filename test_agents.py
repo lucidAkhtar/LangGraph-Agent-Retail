@@ -20,10 +20,20 @@ pprint("Loading vectorstore from FAISS is done...")
 pprint(f"AgentState initialising with user_input...")
 state = AgentState(
     #user_input="I want a casual shoes under 2500." # 3 records as output
-    user_input = "designer kurti for wedding under 3000" # 1 record dummy as output 
-    #user_input = "mens sandals and boots under 2000" # 0 records as output
-    #user_input = "sandals and boots under 2000" # 1 record as output
+    #user_input = "designer kurti for wedding under 3000" # 1 record dummy as output 
+
+    #user_input = "kids clothing under 300" # worked well
+    
     )
+
+### Working as on 17th Aug 2025
+# kids cloth under 1000 -> 1 result
+# sandals and boots under 2000 -> 2 results
+# mens sandals and boots under 2000 -> 1 result
+
+### FAILING as on 17th Aug 2025
+# designer kurti for wedding under 3000 in comparison_reasoner.py
+
 pprint(f"AgentState initialised with user_input...")
 
 state = extract_preferences(state)
@@ -47,7 +57,6 @@ pprint(f"\n [compare_products]=> {state.compared_insights}")
 state = generate_recommendations(state)
 pprint(f"\n [generate_recommendations]=> {state.recommendations}")
 #state.recommendations.to_csv("recommendations.csv",index=False)
-
 
 
 pprint("DONE...")

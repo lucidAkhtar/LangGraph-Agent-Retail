@@ -29,3 +29,7 @@ Kids Clothing.csv
 # Cerebras 
 
 - email id used - marghubcse786@gmail.com
+
+
+- Personalisation and context awareness
+- Session based recommendations
