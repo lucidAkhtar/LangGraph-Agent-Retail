@@ -21,3 +21,6 @@ ollama
 langchain-ollama
 transformers
 cohere
+pytest
+pytest-cov
+

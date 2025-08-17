@@ -116,26 +116,6 @@ def compare_products(state):
     logging.info(f"state.filtered_products is - {state.filtered_products}")
     logging.info(f"state.filtered_products in json is - {state.filtered_products.to_dict(orient='records')}")
 
-
-    # products =  state.filtered_products.to_dict(orient='records')
-    # preferences = state.preferences
-
-    # rows = []
-    # for product in products:
-    #     features = product.get("must have features",[])
-    #     if not isinstance(features,list):
-    #         features = str(features).split(",")
-
-    #     score = int(100*len(features) / max(1, len(preferences.get("must have features",[]))))
-
-    #     row = f"\"{product['name']}\",{product['discount_price']},\"{','.join(features)}\",{score}"
-    #     rows.append(row)
-
-
-    # response_text = "ProductName,Price,Features,MatchScore\n" + "\n".join(rows)
-    # logging.info(f"response text is - {response_text}")
-
-
     # 1. Format Input prompt
     input_text = prompt.format(
 
@@ -162,7 +142,6 @@ def compare_products(state):
             
             cleaned_response = response_text.strip().lstrip('"').rstrip('"')
             cleaned_response = cleaned_response.strip().strip('"')
-            #cleaned_response = clean_llm_csv(response_text)
             
 
             if (cleaned_response.startswith('"') and cleaned_response.endswith('"')) or (cleaned_response.startswith("'")and cleaned_response.endswith("'")):
@@ -175,11 +154,6 @@ def compare_products(state):
             cleaned_response = re.sub(r'""([^"]+)"',r'"\1"',cleaned_response)
             cleaned_response = re.sub(r'\[(.*?)\]',lambda m: '"' + m.group(1).replace('"','')+ '"',cleaned_response)
 
-
-
-           
-
-
             df = pd.read_csv(StringIO(cleaned_response),on_bad_lines="skip")
             print(f"parsed csv dataframe...")
 
@@ -187,7 +161,6 @@ def compare_products(state):
                 df['Features'] = df['Features'].apply(lambda x:[i.strip() for i in str(x).split(',')] if pd.notnull(x) else [])
 
             print(df)
-            #df = df.sort_values(by='Match Score',ascending=False)
             df.to_csv('3.csv',index=False)
             
             state.compared_insights = df.to_dict(orient='records')
