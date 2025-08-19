@@ -20,12 +20,15 @@ This project is designed for **retail AI prototyping** and can be deployed as an
 - **Retail CSV Dataset Support** – Works on preloaded multi-category retail datasets.
 - **Multiple LLM Support** – Works with Ollama, Cerebras, or Gemini APIs.
 - **Streamlit UI** – Easy-to-use frontend for live testing.
-- **REST API** – Flask/FastAPI-style routes for integration into apps.
+- **REST API** – FastAPI-style routes for integration into apps.
 
 ---
+### 📊 Datasets
+- The data is picked from [Kaggle](https://www.kaggle.com/datasets/lokeshparab/amazon-products-dataset) which is Amazon Product Sales dataset 2023.
+- 10 selected categories with only 50 records have been taken for this exercise.
+- This exercise is done using my MacBook Air with 8 GB RAM hence, had compute and infra constraints.
 
 
----
 
 ## ⚙️ Installation
 
@@ -33,23 +36,60 @@ This project is designed for **retail AI prototyping** and can be deployed as an
 ```bash
 git clone https://github.com/lucidAkhtar/LangGraph-Agent-Retail.git
 cd LangGraph-Agent-Retail
+```
 
-
+### 2️⃣ Create & activate a virtual environment
+```bash
 python -m venv venv
 source venv/bin/activate    # macOS/Linux
 venv\Scripts\activate       # Windows
+```
 
+### 3️⃣ Install dependencies
+```bash
+pip install -r requirements.txt
+```
+### 4️⃣ Setup environment variables
+Create a .env file in the root directory:
 
- How It Works
-User Query → Given in natural language.
+```bash
+COHERE_API_KEY=your-cohere-api-key
+```
+---
+### 🛠 Usage
 
-Preference Extractor → Identifies category, budget, brand, etc.
+### Run FastAPI
+```bash
+uvicorn main:app --reload
+```
+### Run Streamlit UI
+```bash
+streamlit run streamlit_app.py
+```
+Access at -  http://localhost:8501
 
-Product Retriever → Searches FAISS vector index for relevant items.
+---
 
-Product Filter → Removes irrelevant products based on constraints.
+### 🧠 How It Works
 
-Comparison Reasoner → Compares shortlisted products.
+#### 1. User Query → Given in natural language.
 
-Recommendation Generator → Returns personalized product suggestions.
+#### 2. Preference Extractor → Identifies category, budget, brand, etc.
+
+#### 3. Product Retriever → Searches FAISS vector index for relevant items.
+
+#### 4. Product Filter → Removes irrelevant products based on constraints.
+
+#### 5. Comparison Reasoner → Compares shortlisted products.
+
+#### 6. Recommendation Generator → Returns personalized product suggestions.
+
+---
+
+### 🧪 Testing (WIP)
+
+---
+
+### 🐳 Docker Deployment (WIP)
+
 

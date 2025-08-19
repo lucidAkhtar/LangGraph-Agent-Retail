@@ -1,47 +1,47 @@
 [pytest]
 
-addopts = -ra -q --strict-config --strict-markers --maxfail=1 --cov=.
+### adopts = -ra -q --strict-config --strict-markers --maxfail=1 --cov=.
 
--ra: show extra summary (skipped/xfail reasons).
+- -ra: show extra summary (skipped/xfail reasons).
 
--q: quieter output (clean CI logs).
+- -q: quieter output (clean CI logs).
 
---strict-config: error on unknown config keys (catches typos).
+- --strict-config: error on unknown config keys (catches typos).
 
---strict-markers: only allow pre-declared markers (prevents marker typos/misuse).
+- --strict-markers: only allow pre-declared markers (prevents marker typos/misuse).
 
---maxfail=1: stop after first failure (fast feedback).
+- --maxfail=1: stop after first failure (fast feedback).
 
---cov=.: enable coverage for the project (via pytest-cov).
+- --cov=.: enable coverage for the project (via pytest-cov).
 
-filterwarnings =
+- filterwarnings =
 
-error: treat warnings as errors (forces clean runs).
+ - error: treat warnings as errors (forces clean runs).
 
-ignore::DeprecationWarning:pkg_resources and ignore::DeprecationWarning:numpy:
+ - ignore::DeprecationWarning:pkg_resources and ignore::DeprecationWarning:numpy:
 silence known third-party deprecations so your build isn’t noisy for reasons outside your code.
 
-testpaths = tests
+- testpaths = tests
 
-restrict test discovery to the tests/ folder (predictable discovery).
+- restrict test discovery to the tests/ folder (predictable discovery).
 
-xfail_strict = true
+- xfail_strict = true
 
-turn XPASS into a failure (ensures xfail is not masking fixed tests).
+ - turn XPASS into a failure (ensures xfail is not masking fixed tests).
 
 [coverage:run]
 
-branch = True
+- branch = True
 
-measure branch coverage (if/else paths), not just line coverage.
+ - measure branch coverage (if/else paths), not just line coverage.
 
-source = .
+- source = .
 
-only measure your project’s code (excludes global site-packages).
+ - only measure your project’s code (excludes global site-packages).
 
-omit = */__init__.py, */site-packages/*
+- omit = */__init__.py, */site-packages/*
 
-exclude boilerplate and third-party code from metrics.
+ - exclude boilerplate and third-party code from metrics.
 
 [coverage:report]
 
