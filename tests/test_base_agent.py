@@ -10,11 +10,11 @@ def test_agent_state_defaults(agent_state_cls):
     """
     state = agent_state_cls(user_input = "find me a phone")
     assert state.user_input == "find me a phone"
-    assert state.preferences = {}
-    assert state.retrieved_products = []
+    assert state.preferences == {}
+    assert state.retrieved_products == []
     assert isinstance(state.filtered_products,pd.DataFrame) and state.filtered_products.empty
-    assert state.compared_insights = []
-    assert state.recommendations = []
+    assert state.compared_insights == []
+    assert state.recommendations == []
 
 def test_agent_state_dataframe_allowed(agent_state_cls):
     """
