@@ -37,18 +37,18 @@ llm = OllamaLLM(model="mistral",temperature=0.2)
 ```
 - Embedding model is used from [Cohere](https://cohere.com/developers) platform and model name is **embed-english-v3.0**. Get a Free (within limits) API key.
 ```bash
-    import cohere
-    import os
-    COHERE_API_KEY = os.getenv("COHERE_API_KEY")
-    if not COHERE_API_KEY:
-        raise ValueError(f"COHERE API KEY environment variable not set...")
-    
-    co = cohere.Client(COHERE_API_KEY)
-    response = co.embed(
-                    texts = batch,
-                    model = "embed-english-v3.0",
-                    input_type = "search_document"
-            )
+import cohere
+import os
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+if not COHERE_API_KEY:
+    raise ValueError(f"COHERE API KEY environment variable not set...")
+
+co = cohere.Client(COHERE_API_KEY)
+response = co.embed(
+                texts = batch,
+                model = "embed-english-v3.0",
+                input_type = "search_document"
+        )
 ```
 - FAISS is used as a vectorstore to perform efficient similarity search and extraction.
 ```bash
@@ -123,4 +123,7 @@ Access at -  http://localhost:8501
 
 ### 🐳 Docker Deployment (WIP)
 
+---
+### Continuous Integration / Continuous Deployment with GitHub Actions (WIP)
 
+---
