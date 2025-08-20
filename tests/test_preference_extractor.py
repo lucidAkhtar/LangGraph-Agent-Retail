@@ -12,6 +12,7 @@ thats why both are defined, so chaining works in either direction.
 """
 
 class FakeChain:
+    
     """
     - The real chain (prompt |llm |parser) is an object pipeline built by operator overloading.Instead of functions, langchain/ollama objects overload pipe operator (|) so you can chain them. 
     

@@ -28,7 +28,38 @@ This project is designed for **retail AI prototyping** and can be deployed as an
 - 10 selected categories with only 50 records have been taken for this exercise.
 - This exercise is done using my MacBook Air with 8 GB RAM hence, had compute and infra constraints.
 
+---
+### LLM and Embedding Model
+- **ollama** has been used as the open source large language model (LLM) with **Mistral** on top of it. 
+```bash
+from langchain_ollama import OllamaLLM
+llm = OllamaLLM(model="mistral",temperature=0.2)
+```
+- Embedding model is used from [Cohere](https://cohere.com/developers) platform and model name is **embed-english-v3.0**. Get a Free (within limits) API key.
+```bash
+    import cohere
+    import os
+    COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+    if not COHERE_API_KEY:
+        raise ValueError(f"COHERE API KEY environment variable not set...")
+    
+    co = cohere.Client(COHERE_API_KEY)
+    response = co.embed(
+                    texts = batch,
+                    model = "embed-english-v3.0",
+                    input_type = "search_document"
+            )
+```
+- FAISS is used as a vectorstore to perform efficient similarity search and extraction.
+```bash
+from langchain_community.vectorstores import FAISS
+vectorstore = FAISS.from_documents(
+                documents = docs,
+                embedding = embeddings_model
 
+        )
+```
+---
 
 ## ⚙️ Installation
 

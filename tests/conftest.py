@@ -100,3 +100,44 @@ def sample_df():
 def agent_state_cls():
     from agents.nodes.base_agent import AgentState
     return AgentState 
+
+
+"""
+pytest -> Runs all test files in the project.
+
+pytest tests/test_preference_extractor.py -> Runs only that one file.
+
+pytest tests/test_preference_extractor.py::test_extract_preferences_assigns_and_returns_same_state 
+-> Runs just that one single test function.
+
+
+What Happens When You Run pytest
+---------------------------------
+
+Step by step:
+
+1. pytest starts → reads pytest.ini for config (logging, testpaths, markers, etc).
+
+2. Test discovery → finds files matching test_*.py or *_test.py.
+
+3. Load fixtures
+
+- conftest.py fixtures are automatically available (like your agent_state_cls if you defined it there).
+
+- @pytest.fixture creates reusable test data (like canned_prefs, patch_chain).
+
+4. Run each test function starting with test_.
+
+5. Assertions
+
+- Any assert that fails → test marked failed.
+
+- If all asserts pass → test ✅ passes.
+
+
+
+
+
+
+
+"""

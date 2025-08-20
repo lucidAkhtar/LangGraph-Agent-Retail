@@ -36,7 +36,7 @@ def test_agent_state_dump_roundtrip(agent_state_cls):
     assert "filtered_products" in d #non-json serializable is acceptable;field must exist
 
 @pytest.mark.parametrize(
-    "field_value",[
+    "field,value",[
         ("preferences",{"brand":"Apple"}),
         ("retrieved_products",[1,2]),
         ("compared_insights",["x"]),
@@ -46,8 +46,8 @@ def test_agent_state_dump_roundtrip(agent_state_cls):
 
 def test_agent_state_mutability(agent_state_cls,field,value):
     """
-    - confiems fields in AgentState can be updated dynamically.
-    - prevents immutability bugs eg- accidentally freezing objects.
+    - confirms fields in AgentState can be updated dynamically.
+    - prevents immutability bugs eg - accidentally freezing objects.
     """
     s = agent_state_cls(user_input = "q")
     setattr(s,field,value)
