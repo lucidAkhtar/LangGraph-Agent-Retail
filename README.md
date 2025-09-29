@@ -1,5 +1,7 @@
 # LangGraph Agent – Retail
 
+# [Deployed App](https://gen-ai-agent-retail.streamlit.app/)
+
 **LangGraph-Agent-Retail** is an **AI-powered retail product recommendation and search agent** built using [LangGraph](https://github.com/langchain-ai/langgraph) and modern LLM tooling.  
 It leverages **multi-agent reasoning**, **vector search**, and **natural language understanding** to deliver personalized product suggestions, comparison reasoning, and preference-based filtering for retail catalogs.
 
